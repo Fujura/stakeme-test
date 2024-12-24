@@ -8,11 +8,9 @@ interface WidgetAndMapProps {
 }
 
 const WidgetAndMap: FC<WidgetAndMapProps> = async ({ mapData }) => {
-	console.log(mapData);
-
 	return (
 		<div className="flex flex-col-reverse items-start md:flex-row mt-10">
-			<WidgetComponent mapData={mapData} />
+			{mapData && <WidgetComponent mapData={mapData} />}
 			<MapComponent />
 		</div>
 	);

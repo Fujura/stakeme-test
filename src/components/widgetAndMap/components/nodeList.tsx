@@ -1,7 +1,11 @@
-import React from "react";
+import { IGroupDataColor } from "@/interfaces/IGroupDataColor";
+import React, { FC } from "react";
 
-const NodeList = ({ data }) => {
-	if (!data) return;
+interface NodeListProps {
+	data: IGroupDataColor[] | null;
+}
+const NodeList: FC<NodeListProps> = ({ data }) => {
+	if (!data) return null;
 	return (
 		<ul className="flex flex-col gap-2">
 			{data.map((item, index) => (

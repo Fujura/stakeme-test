@@ -6,7 +6,7 @@ import doubleNext from "@/public/svg/doubleNext.svg";
 
 interface ModalPaginationProps {
 	page: number;
-	pageCount: number;
+	pageCount: number | null;
 	setPage: Dispatch<SetStateAction<number>>;
 }
 
@@ -15,6 +15,7 @@ export function ModalPagination({
 	pageCount,
 	setPage,
 }: ModalPaginationProps) {
+	if (!pageCount) return;
 	const getPageNumbers = () => {
 		const pages = [];
 		const delta = 1;
@@ -42,6 +43,7 @@ export function ModalPagination({
 							if (page > 2) setPage((prev) => prev - 2);
 							else if (page > 1) setPage((prev) => prev - 1);
 						}}
+						className="cursor-pointer"
 					>
 						<img src={doublePrev.src} alt="prev icon" />
 					</div>
@@ -53,12 +55,12 @@ export function ModalPagination({
 							e.preventDefault();
 							if (page > 1) setPage((prev) => prev - 1);
 						}}
+						className="cursor-pointer"
 					>
 						<img src={prev.src} alt="prev icon" />
 					</div>
 				</div>
 
-				{/* Список номеров страниц */}
 				<div className="flex items-center mx-4 gap-6  xs:gap-8 xs:mx-6 md:gap-10">
 					{pages.map(
 						(pageNumber) =>
@@ -67,7 +69,7 @@ export function ModalPagination({
 									<div
 										className={`${
 											page == pageNumber ? "text-gray-400" : "text-white"
-										}`}
+										} cursor-pointer`}
 										onClick={(e) => {
 											e.preventDefault();
 											setPage(pageNumber);
@@ -86,7 +88,9 @@ export function ModalPagination({
 					)}
 
 					<div
-						className={`${page == pageCount ? "text-gray-400" : "text-white"}`}
+						className={`${
+							page == pageCount ? "text-gray-400" : "text-white"
+						} cursor-pointer`}
 						onClick={(e) => {
 							e.preventDefault();
 							setPage(pageCount);
@@ -103,6 +107,7 @@ export function ModalPagination({
 							e.preventDefault();
 							if (page < pageCount) setPage((prev) => prev + 1);
 						}}
+						className="cursor-pointer"
 					>
 						<img src={next.src} alt="next icon" />
 					</div>
@@ -117,6 +122,7 @@ export function ModalPagination({
 							if (page < pageCount - 1) setPage((prev) => prev + 2);
 							else if (page < pageCount) setPage((prev) => prev + 1);
 						}}
+						className="cursor-pointer"
 					>
 						<img src={doubleNext.src} alt="prev icon" />
 					</div>

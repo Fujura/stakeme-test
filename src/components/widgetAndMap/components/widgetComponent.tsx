@@ -1,19 +1,20 @@
 "use client";
-import { headers } from "next/headers";
 import React, { FC, useEffect, useState } from "react";
 import CircleChart from "./circleChart";
 import ColorsVariable from "./colorsVariable";
 import { IMapData } from "@/interfaces/IMapData";
 import NodeList from "./nodeList";
 import ModalWindow from "./modalWindow";
+import { IGroupedData } from "@/interfaces/IGroupData";
+import { IGroupDataColor } from "@/interfaces/IGroupDataColor";
 
 interface IWidgetProps {
-	mapData?: any[];
+	mapData: IMapData[];
 }
 
 const WidgetComponent: FC<IWidgetProps> = ({ mapData }) => {
-	const [nodeData, setNodeData] = useState<[string, unknown][] | undefined>();
-	const [modalData, setModalData] = useState();
+	const [nodeData, setNodeData] = useState<IGroupDataColor[] | null>();
+	const [modalData, setModalData] = useState<IGroupedData[]>([]);
 	const [isModalOpened, setModalOpened] = useState<boolean>(false);
 	const colors = [
 		"#1e90ff",
@@ -25,48 +26,58 @@ const WidgetComponent: FC<IWidgetProps> = ({ mapData }) => {
 	];
 	useEffect(() => {
 		if (mapData) {
-			const groupedData = mapData?.reduce((acc, item) => {
-				if (!acc[item.as]) {
-					acc[item.as] = [];
-				}
-				acc[item.as].push(item);
-				return acc;
-			}, {});
+			const groupedData = mapData.reduce<Record<string, IMapData[]>>(
+				(acc, item) => {
+					if (!acc[item.as]) {
+						acc[item.as] = [];
+					}
+					acc[item.as].push(item);
+					return acc;
+				},
+				{}
+			);
 
 			const sortedEntries = Object.entries(groupedData).sort(
 				([, groupA], [, groupB]) => groupB.length - groupA.length
 			);
 
-			// Преобразуем в массив объектов
-			const sortedGroupedData = sortedEntries.map(([key, value]) => ({
-				name: key,
-				nodes: value,
-				listName: value[0]?.isp,
-			}));
+			const sortedGroupedData: IGroupedData[] = sortedEntries.map(
+				([key, value]) => ({
+					name: key,
+					nodes: value,
+					listName: value[0]?.isp || "Unknown",
+				})
+			);
 
 			setModalData(sortedGroupedData);
 
 			const top6Entries = sortedGroupedData.slice(0, 6);
 
-			const dataWithColors = top6Entries.map((item, index) => ({
-				...item, // Распаковываем текущий объект
-				color: colors[index], // Добавляем новое поле color
-			}));
-			// Сохраняем в стейт
+			const dataWithColors: IGroupDataColor[] = top6Entries.map(
+				(item, index) => ({
+					...item,
+					color: colors[index] || "#000000",
+				})
+			);
+
 			setNodeData(dataWithColors);
 		}
 	}, [mapData]);
 
-	console.log(isModalOpened);
-
+	if (!mapData.length)
+		return (
+			<div className="md:mx-0 mx-auto">
+				<div>
+					<p>No data available</p>
+				</div>
+			</div>
+		);
 	return (
 		<div className="md:mx-0 mx-auto">
 			<div
-				className="bg-[#0C0D0E] p-[15px] xs:p-[30px] rounded-[20px]  flex flex-col-reverse cursor-pointer active:bg-[#2b2e31] duration-150	md:hover:bg-[#0C0D0E] md:cursor-auto  md:flex-col"
+				className="bg-[#0C0D0E] p-[15px] xs:p-[20px] md:p-[30px] rounded-[20px]  flex flex-col-reverse cursor-pointer active:bg-[#2b2e31] duration-150	md:hover:bg-[#0C0D0E] md:cursor-auto  md:flex-col"
 				tabIndex={-1}
-				onClick={(e) => {
-					// Сброс фокуса с элемента
-
+				onClick={() => {
 					if (window.innerWidth <= 768) {
 						setModalOpened(true);
 					}
@@ -74,13 +85,15 @@ const WidgetComponent: FC<IWidgetProps> = ({ mapData }) => {
 			>
 				<div className="flex flex-col md:flex-row md:justify-between">
 					<h3 className="text-[18px]">Node Data center</h3>
-					<div>
-						<ColorsVariable data={nodeData} />
-					</div>
+					<div>{nodeData && <ColorsVariable data={nodeData} />}</div>
 				</div>
 				<div className="flex items-center justify-between gap-5">
-					<CircleChart data={nodeData} />
-					<NodeList data={nodeData} />
+					{nodeData && (
+						<>
+							<CircleChart data={nodeData} />
+							<NodeList data={nodeData} />
+						</>
+					)}
 				</div>
 
 				<div className="hidden md:flex mt-6 justify-center">
@@ -92,11 +105,13 @@ const WidgetComponent: FC<IWidgetProps> = ({ mapData }) => {
 					</button>
 				</div>
 			</div>
-			<ModalWindow
-				isModalOpened={isModalOpened}
-				modalData={modalData}
-				setModalOpened={setModalOpened}
-			/>
+			{modalData && (
+				<ModalWindow
+					isModalOpened={isModalOpened}
+					modalData={modalData}
+					setModalOpened={setModalOpened}
+				/>
+			)}
 		</div>
 	);
 };

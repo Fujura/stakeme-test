@@ -1,7 +1,11 @@
+import { IGroupedData } from "@/interfaces/IGroupData";
 import React, { FC } from "react";
 
-const ColorsVariable: FC<any> = ({ data }) => {
-	const colors = [
+interface ColorsVariableProps {
+	data: IGroupedData[] | null;
+}
+const ColorsVariable: FC<ColorsVariableProps> = ({ data }) => {
+	const colors: string[] = [
 		"#1e90ff",
 		"#50c878",
 		"#8a2be2",
@@ -12,7 +16,7 @@ const ColorsVariable: FC<any> = ({ data }) => {
 	return (
 		<div className="flex items-center gap-3 ">
 			<div className="flex">
-				{colors.map((item: any, index: number) => (
+				{colors.map((item: string, index: number) => (
 					<div
 						key={index}
 						className={`w-[20px] h-[20px] rounded-[50%]`}

@@ -1,7 +1,10 @@
-import React from "react";
+import { IGroupDataColor } from "@/interfaces/IGroupDataColor";
+import React, { FC } from "react";
 
-const CircleChart = ({ data }) => {
-	// Рассчитываем общий total
+interface CircleChartProps {
+	data: IGroupDataColor[] | null;
+}
+const CircleChart: FC<CircleChartProps> = ({ data }) => {
 	if (!data) return null;
 	const total = data.reduce((sum, item) => sum + item.nodes.length, 0);
 
@@ -16,12 +19,10 @@ const CircleChart = ({ data }) => {
 			className="w-[140px] xs:w-[200px] "
 		>
 			{data.map((item, index) => {
-				// Рассчитываем процентное значение для каждого сегмента
 				const startAngle = (cumulativeValue / total) * 100;
 				cumulativeValue += item.nodes.length;
 				const endAngle = (cumulativeValue / total) * 100;
 
-				// Минимальная длина сегмента для маленьких значений
 				const dashLength =
 					endAngle - startAngle > 1 ? endAngle - startAngle : 1;
 
