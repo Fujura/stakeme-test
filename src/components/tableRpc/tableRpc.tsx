@@ -177,26 +177,26 @@ const TableRpc: FC<TableRpcProps> = ({ networkData }) => {
 				</div>
 				<div className="hidden md:flex m-auto w-[96%] h-0.5 bg-[#0B0B0B]" />
 
-				{isLoading ? (
-					<div>
-						<div className="space-y-4 relative ">
+				<div className="min-h-[400px]">
+					{isLoading ? (
+						<div className="space-y-4 relative mt-4">
 							{Array.from({ length: 5 }, (_, index) => (
 								<div key={index}>
 									<div
 										key={index}
-										className="h-[70px] w-full bg-gray-200 animate-pulse rounded-md"
+										className="h-[70px] w-full bg-[#0B0B0B] animate-pulse rounded-xl"
 									></div>
 								</div>
 							))}
 						</div>
-					</div>
-				) : filtredData.length > 0 ? (
-					<TableComponent networkData={filtredData} />
-				) : (
-					<p className="text-center mt-4 text-[#707070] text-xl">
-						No nodes found
-					</p>
-				)}
+					) : filtredData.length > 0 ? (
+						<TableComponent networkData={filtredData} />
+					) : (
+						<p className="text-center mt-4 text-[#707070] text-xl">
+							No nodes found
+						</p>
+					)}
+				</div>
 			</div>
 		</div>
 	);
