@@ -10,7 +10,7 @@ First, install the dependencies and build the project:
 
 ```bash
 #1
-npm run install
+npm install
 
 #2
 npm run build
